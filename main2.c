@@ -1,43 +1,36 @@
 #include <stdio.h>
-#include <unistd.h>
 #include <sys/types.h>
-#include <sys/wait.h>
-#include <stdlib.h>
+#include <unistd.h>   // fork()
 
 #define MAX_COUNT 200
 
-void ChildProcess(void) {
-    int i;
-    for (i = 1; i <= MAX_COUNT; i++) {
-        printf("   Child (pid %d): value = %d\n", (int)getpid(), i);
-    }
-}
+void ChildProcess(void);   // child process prototype
+void ParentProcess(void);  // parent process prototype
 
-void ParentProcess(void) {
-    int i;
-    for (i = 1; i <= MAX_COUNT; i++) {
-        printf("Parent (pid %d): value = %d\n", (int)getpid(), i);
-    }
-}
-
-int main(void) {
-    pid_t pid;
-
-    pid = fork();
-
+int main(void)
+{
+    pid_t pid = fork();
     if (pid < 0) {
-        perror("fork failed");
+        perror("fork");
         return 1;
-    }
-
-    if (pid == 0) {
-        ChildProcess();   // child runs this
-        _exit(0);         // exit cleanly
+    } else if (pid == 0) {
+        ChildProcess();
     } else {
-        ParentProcess();  // parent runs this
-        int status;
-        waitpid(pid, &status, 0); // parent waits for child
+        ParentProcess();
     }
-
     return 0;
+}
+
+void ChildProcess(void)
+{
+    for (int i = 1; i <= MAX_COUNT; i++)
+        printf("   This line is from child, value = %d\n", i);
+    printf("   *** Child process is done ***\n");
+}
+
+void ParentProcess(void)
+{
+    for (int i = 1; i <= MAX_COUNT; i++)
+        printf("This line is from parent, value = %d\n", i);
+    printf("*** Parent is done ***\n");
 }

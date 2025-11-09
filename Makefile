@@ -1,16 +1,28 @@
-SOURCES = main3.c
-OBJS    = $(SOURCES:.c=.o)
-TARGET  = my3proc
+CC      := gcc
+CFLAGS  := -std=c99 -Wall -Wextra -O2
+LDFLAGS :=
 
-CC   = gcc
-OPTS = -Wall
-LIBS =
+.PHONY: all clean run1 run2 run3
 
-$(TARGET): $(OBJS)
-	$(CC) -o $(TARGET) $(OBJS) $(LIBS)
+all: prog1 prog2 my3proc
 
-%.o: %.c
-	$(CC) $(OPTS) -c $< -o $@
+prog1: main.c
+	$(CC) $(CFLAGS) $< -o $@ $(LDFLAGS)
+
+prog2: main2.c
+	$(CC) $(CFLAGS) $< -o $@ $(LDFLAGS)
+
+my3proc: main3.c
+	$(CC) $(CFLAGS) $< -o $@ $(LDFLAGS)
+
+run1: prog1
+	./prog1
+
+run2: prog2
+	./prog2
+
+run3: my3proc
+	./my3proc
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f prog1 prog2 my3proc *.o
